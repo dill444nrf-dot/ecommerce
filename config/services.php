@@ -35,7 +35,7 @@ return [
         ],
     ],
 
-      'google' => [
+    'google' => [
         // Client ID dari Google Cloud Console
         'client_id' => env('GOOGLE_CLIENT_ID'),
         // ↑ env() membaca nilai dari file .env
