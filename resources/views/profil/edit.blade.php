@@ -19,7 +19,7 @@
             <div class="card mb-4">
                 <div class="card-header bg-white fw-bold">Foto Profil</div>
                 <div class="card-body">
-                    @include('profile.partials.update-avatar-form')
+                    @include('profil.partials.update-avatar-form')
                 </div>
             </div>
 
@@ -27,7 +27,7 @@
             <div class="card mb-4">
                 <div class="card-header bg-white fw-bold">Informasi Profil</div>
                 <div class="card-body">
-                    @include('profile.partials.update-profile-information-form')
+                    @include('profil.partials.update-profil-information-form')
                 </div>
             </div>
 
@@ -35,7 +35,7 @@
             <div class="card mb-4">
                 <div class="card-header bg-white fw-bold">Update Password</div>
                 <div class="card-body">
-                    @include('profile.partials.update-password-form')
+                    @include('profil.partials.update-password-form')
                 </div>
             </div>
 
@@ -43,7 +43,7 @@
             <div class="card mb-4">
                 <div class="card-header bg-white fw-bold">Akun Terhubung</div>
                 <div class="card-body">
-                    @include('profile.partials.connected-accounts')
+                    @include('profil.partials.connected-accounts')
                 </div>
             </div>
 
@@ -51,7 +51,7 @@
             <div class="card border-danger">
                 <div class="card-header bg-danger text-white fw-bold">Hapus Akun</div>
                 <div class="card-body">
-                    @include('profile.partials.delete-user-form')
+                    @include('profil.partials.delete-user-form')
                 </div>
             </div>
 
