@@ -1,89 +1,111 @@
 <?php
+// app/Http/Controllers/ProfileController.php
 
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
-use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
+
 
 class ProfileController extends Controller
 {
     /**
-     * Tampilkan halaman edit profil
+     * Menampilkan form edit profil.
      */
     public function edit(Request $request): View
     {
-        return view('profil.edit', [
+        return view('profile.edit', [
+            // Kirim data user yang sedang login ke view
             'user' => $request->user(),
         ]);
     }
 
     /**
-     * Update data profil
+     * Mengupdate informasi profil user.
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
         $user = $request->user();
 
-        // Upload avatar baru jika ada
+        // 1. Handle Upload Avatar
+        // Cek apakah user mengupload file baru di input 'avatar'?
         if ($request->hasFile('avatar')) {
-            $user->avatar = $this->uploadAvatar($request, $user);
+            // Upload file baru dan dapatkan path-nya (e.g., avatars/xxx.jpg)
+            $avatarPath = $this->uploadAvatar($request, $user);
+
+            // Simpan path ke properti model, tapi belum di-save ke DB (masih di memory)
+            $user->avatar = $avatarPath;
         }
 
-        // Update field lain
+        // 2. Update Data Text (Nama, Email, dll)
+        // fill() mengisi atribut model dengan data validasi, tapi belum disimpan ke DB.
+        // Ini lebih aman daripada $user->update() langsung karena kita mau cek 'isDirty' dulu.
         $user->fill($request->validated());
 
-        // Reset verifikasi email jika email berubah
+        // 3. Cek Perubahan Email
+        // Jika email berubah, kita harus membatalkan status verifikasi email (isDirty cek perubahan di memory).
         if ($user->isDirty('email')) {
             $user->email_verified_at = null;
         }
 
+        // 4. Simpan ke Database
+        // Method save() baru benar-benar menjalankan query UPDATE ke database.
         $user->save();
 
         return Redirect::route('profile.edit')
-            ->with('success', 'Profil berhasil diperbarui.');
+            ->with('success', 'Profil berhasil diperbarui!');
     }
 
     /**
-     * Upload avatar
+     * Helper khusus untuk menangani logika upload avatar.
+     * Mengembalikan string path file yang tersimpan.
      */
-    protected function uploadAvatar(ProfileUpdateRequest $request, User $user): string
+    protected function uploadAvatar(ProfileUpdateRequest $request, $user): string
     {
-        // Hapus avatar lama
+        // Hapus avatar lama (Garbage Collection)
+        // Cek 1: Apakah user punya avatar sebelumnya?
+        // Cek 2: Apakah file fisiknya benar-benar ada di storage 'public'?
         if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
             Storage::disk('public')->delete($user->avatar);
         }
 
-        $filename = 'avatar-' . $user->id . '-' . time() . '.' .
-            $request->file('avatar')->extension();
+        // Generate nama file unik untuk mencegah bentrok nama.
+        // Format: avatar-{user_id}-{timestamp}.{ext}
+        $filename = 'avatar-' . $user->id . '-' . time() . '.' . $request->file('avatar')->extension();
 
-        return $request->file('avatar')
-            ->storeAs('avatars', $filename, 'public');
+        // Simpan file ke folder: storage/app/public/avatars
+        // return path relatif: "avatars/namafile.jpg"
+        $path = $request->file('avatar')->storeAs('avatars', $filename, 'public');
+
+        return $path;
     }
 
     /**
-     * Hapus avatar
+     * Menghapus avatar (tombol "Hapus Foto").
      */
     public function deleteAvatar(Request $request): RedirectResponse
     {
         $user = $request->user();
 
+        // Hapus file fisik
         if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
             Storage::disk('public')->delete($user->avatar);
+
+            // Set kolom di database jadi NULL
             $user->update(['avatar' => null]);
         }
 
         return back()->with('success', 'Foto profil berhasil dihapus.');
     }
 
+
     /**
-     * Update password
+     * Update password user.
      */
     public function updatePassword(Request $request): RedirectResponse
     {
@@ -93,31 +115,36 @@ class ProfileController extends Controller
         ]);
 
         $request->user()->update([
-            'password' => Hash::make($validated['password']),
+            'password' => \Illuminate\Support\Facades\Hash::make($validated['password']),
         ]);
 
         return back()->with('status', 'password-updated');
     }
 
     /**
-     * Hapus akun
+     * Menghapus akun user permanen.
      */
     public function destroy(Request $request): RedirectResponse
     {
+        // Validasi password untuk keamanan sebelum hapus akun
         $request->validateWithBag('userDeletion', [
             'password' => ['required', 'current_password'],
         ]);
 
         $user = $request->user();
 
+        // Logout dulu
         Auth::logout();
 
+        // Hapus avatar fisik user sebelum hapus data user
         if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
             Storage::disk('public')->delete($user->avatar);
         }
 
+        // Hapus data user dari DB
         $user->delete();
 
+        // Invalidate session agar tidak bisa dipakai lagi (Security)
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 

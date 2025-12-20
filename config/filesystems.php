@@ -77,7 +77,7 @@ return [
         public_path('storage') => storage_path('app/public'),
     ],
 
-   // config/filesystems.php
+// config/filesystems.php
 
 'disks' => [
     'local' => [
