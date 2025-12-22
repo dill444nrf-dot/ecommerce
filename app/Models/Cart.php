@@ -9,7 +9,8 @@ use Illuminate\Database\Eloquent\Model;
 class Cart extends Model
 {
     use HasFactory;
-
+    protected $appends = ['subtotal'];
+    
     protected $fillable = [
         'user_id',
         'session_id',
