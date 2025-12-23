@@ -35,7 +35,7 @@
     {{-- Kategori --}}
     <section class="py-5">
         <div class="container">
-            <h2 class="text-center mb-4">Kategori lampu hias</h2>
+            <h2 class="text-center mb-4">Kategori Lapu hias</h2>
             <div class="row g-4">
                 @foreach($categories as $category)
                     <div class="col-6 col-md-4 col-lg-2">
