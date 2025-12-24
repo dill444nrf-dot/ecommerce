@@ -1,27 +1,27 @@
 <?php
-
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Wishlist extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
         'user_id',
         'product_id',
-
     ];
 
-     public function user()
+    // ==================== RELATIONSHIPS ====================
+
+    public function wishlists()
     {
-        return $this->belongsTo(User::class);
+        // Relasi User ke Product melalui tabel wishlists
+        return $this->belongsToMany(Product::class, 'wishlists')
+            ->withTimestamps(); // Agar created_at/updated_at di pivot terisi
     }
 
-     public function product()
+// Helper untuk cek apakah user sudah wishlist produk tertentu
+    public function hasInWishlist(Product $product)
     {
-        return $this->belongsTo(Product::class);
+        return $this->wishlists()->where('product_id', $product->id)->exists();
     }
 }
