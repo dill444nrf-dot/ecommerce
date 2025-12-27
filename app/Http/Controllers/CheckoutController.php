@@ -56,10 +56,11 @@ class CheckoutController extends Controller
 
         $cartItems = $user->cart->items;
 
-        // Subtotal yang benar
-        $subtotal = $cartItems->sum(fn ($item) =>
-            ($item->product?->price ?? 0) * $item->quantity
-        );
+       $subtotal = $cartItems->sum(fn ($item) =>
+    $item->price * $item->quantity
+);
+
+
 
         $shippingCost = 10000;
 

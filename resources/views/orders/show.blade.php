@@ -67,7 +67,7 @@
                                     <td>{{ $item->product_name }}</td>
                                     <td class="text-center">{{ $item->quantity }}</td>
                                     <td class="text-end">
-                                        Rp {{ number_format($item->price, 0, ',', '.') }}
+                                        Rp {{ number_format($item->discount_price ?? $item->price, 0, ',', '.') }}
                                     </td>
                                     <td class="text-end">
                                         Rp {{ number_format($item->subtotal, 0, ',', '.') }}
@@ -110,7 +110,7 @@
                 </div>
 
                 {{-- Tombol Bayar (hanya jika pending) --}}
-                @if($order->status === 'pending' && $snapToken)
+                @if($order->status === 'pending' && $order->snap_token)
                 <div class="card-body bg-primary bg-opacity-10 border-top text-center">
                     <p class="text-muted mb-4">
                         Selesaikan pembayaran Anda sebelum batas waktu berakhir.
@@ -127,7 +127,7 @@
 </div>
 
 {{-- Snap.js Integration --}}
-@if($snapToken)
+@if($order->snap_token)
 @push('scripts')
 {{-- Load Snap JS dari Midtrans --}}
 <script src="{{ config('midtrans.snap_url') }}" data-client-key="{{ config('midtrans.client_key') }}"></script>
@@ -142,7 +142,7 @@
                 payButton.disabled = true;
                 payButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Memproses...';
 
-                window.snap.pay('{{ $snapToken }}', {
+                window.snap.pay('{{ $order->snap_token }}', {
                     onSuccess: function (result) {
                         console.log('Payment Success:', result);
                         window.location.href = '{{ route("orders.success", $order) }}';
