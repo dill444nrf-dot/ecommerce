@@ -8,6 +8,7 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Cache;
 
 class CategoryController extends Controller
 {
@@ -58,6 +59,22 @@ class CategoryController extends Controller
         Category::create($validated);
 
         return back()->with('success', 'Kategori berhasil ditambahkan!');
+
+                // Sebelum (Selalu Query DB)
+        // Setiap user refresh halaman, kita konek ke DB, query, ambil data, dan tutup koneksi. Boros!
+        $categories = Category::all();
+
+        // Sesudah (Cek Cache dulu)
+        // Logika:
+        // 1. Cek apakah ada data dengan key 'global_categories' di RAM (Cache)?
+        // 2. Jika ADA, kembalikan langsung (tanpa sentuh DB). Cepat!
+        // 3. Jika TIDAK ADA, jalankan function(), simpan hasilnya ke Cache selama 3600 detik (1 jam), lalu kembalikan.
+        $categories = Cache::remember('global_categories', 3600, function () {
+            return Category::withCount('products')->get(); // Sekalian Eager Load count produk
+        });
+
+        // CategoryController store/update/delete
+        Cache::forget('global_categories');
     }
 
     /**
@@ -95,6 +112,21 @@ class CategoryController extends Controller
         $category->update($validated);
 
         return back()->with('success', 'Kategori berhasil diperbarui!');
+
+                // Sebelum (Selalu Query DB)
+        // Setiap user refresh halaman, kita konek ke DB, query, ambil data, dan tutup koneksi. Boros!
+        $categories = Category::all();
+
+        // Sesudah (Cek Cache dulu)
+        // Logika:
+        // 1. Cek apakah ada data dengan key 'global_categories' di RAM (Cache)?
+        // 2. Jika ADA, kembalikan langsung (tanpa sentuh DB). Cepat!
+        // 3. Jika TIDAK ADA, jalankan function(), simpan hasilnya ke Cache selama 3600 detik (1 jam), lalu kembalikan.
+        $categories = Cache::remember('global_categories', 3600, function () {
+            return Category::withCount('products')->get(); // Sekalian Eager Load count produk
+        });
+        // CategoryController store/update/delete
+        Cache::forget('global_categories');
     }
 
     /**
@@ -119,5 +151,21 @@ class CategoryController extends Controller
         $category->delete();
 
         return back()->with('success', 'Kategori berhasil dihapus!');
+       
+
+        // Sebelum (Selalu Query DB)
+        // Setiap user refresh halaman, kita konek ke DB, query, ambil data, dan tutup koneksi. Boros!
+        $categories = Category::all();
+
+        // Sesudah (Cek Cache dulu)
+        // Logika:
+        // 1. Cek apakah ada data dengan key 'global_categories' di RAM (Cache)?
+        // 2. Jika ADA, kembalikan langsung (tanpa sentuh DB). Cepat!
+        // 3. Jika TIDAK ADA, jalankan function(), simpan hasilnya ke Cache selama 3600 detik (1 jam), lalu kembalikan.
+        $categories = Cache::remember('global_categories', 3600, function () {
+            return Category::withCount('products')->get(); // Sekalian Eager Load count produk
+        });
+        // CategoryController store/update/delete
+        Cache::forget('global_categories');
     }
 }

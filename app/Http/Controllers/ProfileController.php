@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
-
 class ProfileController extends Controller
 {
     /**
@@ -19,7 +18,7 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
-        return view('profile.edit', [
+        return view('profil.edit', [
             // Kirim data user yang sedang login ke view
             'user' => $request->user(),
         ]);
@@ -57,7 +56,7 @@ class ProfileController extends Controller
         // Method save() baru benar-benar menjalankan query UPDATE ke database.
         $user->save();
 
-        return Redirect::route('profile.edit')
+        return Redirect::route('profil.edit')
             ->with('success', 'Profil berhasil diperbarui!');
     }
 
@@ -103,7 +102,6 @@ class ProfileController extends Controller
         return back()->with('success', 'Foto profil berhasil dihapus.');
     }
 
-
     /**
      * Update password user.
      */
@@ -111,7 +109,7 @@ class ProfileController extends Controller
     {
         $validated = $request->validateWithBag('updatePassword', [
             'current_password' => ['required', 'current_password'],
-            'password' => ['required', 'confirmed', 'min:8'],
+            'password'         => ['required', 'confirmed', 'min:8'],
         ]);
 
         $request->user()->update([

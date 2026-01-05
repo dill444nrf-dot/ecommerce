@@ -69,6 +69,7 @@
                                     <td class="text-end">
                                         Rp {{ number_format($item->discount_price ?? $item->price, 0, ',', '.') }}
                                     </td>
+                                    
                                     <td class="text-end">
                                         Rp {{ number_format($item->subtotal, 0, ',', '.') }}
                                     </td>
@@ -108,9 +109,13 @@
                         {{ $order->shipping_address }}
                     </address>
                 </div>
+<div class="alert alert-info">
+                    Status: {{ $order->status ?? 'NULL' }} <br>
+                    Snap Token: {{ $order->snap_token ? 'ADA' : 'KOSONG' }}
+                </div>                
 
                 {{-- Tombol Bayar (hanya jika pending) --}}
-                @if($order->status === 'pending' && $order->snap_token)
+                @if($order->status === 'pending' && $snapToken)
                 <div class="card-body bg-primary bg-opacity-10 border-top text-center">
                     <p class="text-muted mb-4">
                         Selesaikan pembayaran Anda sebelum batas waktu berakhir.
@@ -127,7 +132,7 @@
 </div>
 
 {{-- Snap.js Integration --}}
-@if($order->snap_token)
+@if($snapToken)
 @push('scripts')
 {{-- Load Snap JS dari Midtrans --}}
 <script src="{{ config('midtrans.snap_url') }}" data-client-key="{{ config('midtrans.client_key') }}"></script>
@@ -142,7 +147,7 @@
                 payButton.disabled = true;
                 payButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Memproses...';
 
-                window.snap.pay('{{ $order->snap_token }}', {
+                window.snap.pay('{{ $snapToken }}', {
                     onSuccess: function (result) {
                         console.log('Payment Success:', result);
                         window.location.href = '{{ route("orders.success", $order) }}';

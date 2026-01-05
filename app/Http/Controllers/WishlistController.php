@@ -1,97 +1,65 @@
 <?php
+// app/Http/Controllers/WishlistController.php
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use App\Models\Order;
 
-class CheckoutController extends Controller
+class WishlistController extends Controller
 {
     /**
-     * Halaman checkout
+     * Menampilkan halaman daftar wishlist user.
      */
     public function index()
     {
-        $user = Auth::user();
+        // Ambil produk yang di-wishlist oleh user yang sedang login
+        $products = auth()->user()->wishlists()
+            ->with(['category', 'primaryImage']) // Eager load
+            ->latest('wishlists.created_at') // Urutkan dari yang baru di-wishlist
+            ->paginate(12);
 
-        if (!$user || !$user->cart || $user->cart->items->isEmpty()) {
-            return redirect()->route('cart.index')
-                ->with('error', 'Keranjang kosong');
-        }
-
-        $cartItems = $user->cart->items;
-
-        // Perbaiki logika subtotal → pastikan dikalikan quantity
-        $subtotal = $cartItems->sum(fn ($item) =>
-            ($item->product?->price ?? 0) * $item->quantity
-        );
-
-        $shippingCost = 10000; // contoh ongkir
-
-        return view('checkout.index', compact(
-            'cartItems',
-            'subtotal',
-            'shippingCost'
-        ));
+        return view('wishlist.index', compact('products'));
     }
 
     /**
-     * Proses checkout → simpan order
+     * Toggle wishlist (AJAX handler).
+     * Endpoint ini akan dipanggil oleh JavaScript.
+     *
+     * Konsep Toggle:
+     * - Jika user SUDAH like -> Hapus (Unlike/Detach)
+     * - Jika user BELUM like -> Tambah (Like/Attach)
      */
-    public function store(Request $request)
+    public function toggle(Product $product)
     {
-        $user = Auth::user();
+        $user = auth()->user();
 
-        if (!$user || !$user->cart || $user->cart->items->isEmpty()) {
-            return back()->with('error', 'Keranjang kosong');
+        // 1. Cek apakah produk ini ada di daftar wishlist user?
+        if ($user->hasInWishlist($product)) {
+            // Skenario: User mau UNLIKE
+            // detach() menghapus record di tabel pivot (wishlists)
+            // berdasarkan user_id dan product_id.
+            $user->wishlists()->detach($product->id);
+
+            $added = false; // Indikator untuk frontend: "Hapus warna merah"
+            $message = 'Produk dihapus dari wishlist.';
+        } else {
+            // Skenario: User mau LIKE
+            // attach() menambahkan record baru di tabel pivot.
+            // Tidak perlu set user_id manual, Laravel otomatis tahu dari $user->wishlists()
+            $user->wishlists()->attach($product->id);
+
+            $added = true; // Indikator untuk frontend: "Ubah jadi merah"
+            $message = 'Produk ditambahkan ke wishlist!';
         }
 
-        $request->validate([
-            'shipping_name'    => 'required|string|max:100',
-            'shipping_phone'   => 'required|string|max:20',
-            'shipping_address' => 'required|string|max:255',
-            'notes'            => 'nullable|string|max:255',
+        // Return JSON response yang ringan untuk JavaScript
+        // Kita kirim status "added" agar JS tahu harus ganti ikon love jadi merah atau abu-abu.
+        return response()->json([
+            'status' => 'success',
+            'added' => $added,
+            'message' => $message,
+            'count' => $user->wishlists()->count() // Kirim jumlah terbaru untuk update badge header
         ]);
-
-        $cartItems = $user->cart->items;
-
-        // Subtotal yang benar
-        $subtotal = $cartItems->sum(fn ($item) =>
-            ($item->product?->price ?? 0) * $item->quantity
-        );
-
-        $shippingCost = 10000;
-
-        // Buat order
-        $order = Order::create([
-            'user_id'          => $user->id,
-            'order_number'     => 'ORD-' . time(),
-            'total_amount'     => $subtotal + $shippingCost,
-            'shipping_cost'    => $shippingCost,
-            'status'           => 'pending',
-            'shipping_name'    => $request->shipping_name,
-            'shipping_phone'   => $request->shipping_phone,
-            'shipping_address' => $request->shipping_address,
-            'notes'            => $request->notes,
-        ]);
-
-        // Simpan item order
-        foreach ($cartItems as $item) {
-            if (!$item->product) continue; // skip jika produk hilang
-            $order->items()->create([
-                'product_id'   => $item->product_id,
-                'product_name' => $item->product->name,
-                'price'        => $item->product->price,
-                'quantity'     => $item->quantity,
-                'subtotal'     => $item->product->price * $item->quantity,
-            ]);
-        }
-
-        // Kosongkan cart
-        $user->cart->items()->delete();
-
-        return redirect()->route('orders.index')
-            ->with('success', 'Pesanan berhasil dibuat 🎉');
     }
 }

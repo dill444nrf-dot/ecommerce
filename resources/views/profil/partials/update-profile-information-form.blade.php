@@ -1,12 +1,12 @@
-{{-- resources/views/profile/partials/update-profile-information-form.blade.php --}}
+{{-- resources/views/profil/partials/update-profil-information-form.blade.php --}}
 
 <p class="text-muted small">Perbarui informasi profil dan alamat email kamu.</p>
 
-<form id="send-verification" method="post" action="{{ route('verification.send') }}">
+{{-- <form id="send-verification" method="post" action="{{ route('verification.send') }}">
     @csrf
-</form>
+</form> --}}
 
-<form method="post" action="{{ route('profile.update') }}">
+<form method="post" action="{{ route('profil.update') }}">
     @csrf
     @method('patch')
 
