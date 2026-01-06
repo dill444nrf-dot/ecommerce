@@ -79,7 +79,7 @@ FUNGSI: Navigation bar untuk customer
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li>
-                            <a class="dropdown-item" href="{{ route('profile.edit') }}">
+                            <a class="dropdown-item" href="{{ route('profil.edit') }}">
                                 <i class="bi bi-person me-2"></i> Profil Saya
                             </a>
                         </li>

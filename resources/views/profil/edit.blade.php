@@ -27,7 +27,7 @@
             <div class="card mb-4">
                 <div class="card-header bg-white fw-bold">Informasi Profil</div>
                 <div class="card-body">
-                    @include('profil.partials.update-profil-information-form')
+                    @include('profil.partials.update-profile-information-form')
                 </div>
             </div>
 

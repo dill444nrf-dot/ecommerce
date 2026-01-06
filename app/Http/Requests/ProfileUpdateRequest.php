@@ -2,6 +2,9 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule; // untuk Rule::unique()
+use App\Models\User;           // supaya User dikenal di Rule::unique(User::class)
+
 
 class ProfileUpdateRequest extends FormRequest
 {
@@ -10,7 +13,7 @@ class ProfileUpdateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**

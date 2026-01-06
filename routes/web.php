@@ -56,11 +56,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/orders/{order}/pending', [OrderController::class, 'pending'])->name('orders.pending');
 
     // Profil
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    Route::delete('/profile/avatar', [ProfileController::class, 'deleteAvatar'])->name('profile.avatar.destroy');
-    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profil.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profil.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profil.destroy');
+    Route::delete('/profile/avatar', [ProfileController::class, 'deleteAvatar'])->name('profil.avatar.destroy');
+    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profil.password.update');
 
 });
 
