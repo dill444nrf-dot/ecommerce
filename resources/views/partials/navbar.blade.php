@@ -6,11 +6,10 @@ FUNGSI: Navigation bar untuk customer
 <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
     <div class="container">
         {{-- Logo & Brand --}}
-        <a class="navbar-brand text-primary" href="{{ route('home') }}">
-            <i class="bi bi-bag-heart-fill me-2"></i>
-            TokoOnline
+        <a class="navbar-brand d-flex align-items-center fw-bold" href="{{ route('home') }}">
+            <i class="bi bi-lightbulb-fill me-2 brand-icon"></i>
+            <span class="brand-text">Dwaa Lux Lighting</span>
         </a>
-
         {{-- Mobile Toggle --}}
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
             <span class="navbar-toggler-icon"></span>

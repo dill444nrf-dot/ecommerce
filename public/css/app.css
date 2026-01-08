@@ -1,0 +1,121 @@
+/* ===========================
+   DWAA LUX – NAVBAR TUNING
+   (TANPA UBAH BLADE)
+=========================== */
+
+:root {
+    --lux-gold: #D4AF37;
+    --lux-glow: #FFD966;
+    --lux-dark: #2b2b2b;
+}
+
+/* Navbar base */
+.navbar-light.bg-white {
+    border-bottom: 1px solid #eee;
+}
+
+/* Brand */
+.navbar .brand-text {
+    color: var(--lux-gold);
+    font-weight: 700;
+    letter-spacing: .5px;
+}
+
+.navbar .brand-icon {
+    color: var(--lux-gold);
+    text-shadow: 0 0 6px rgba(212,175,55,.45);
+}
+
+/* Nav links */
+.navbar .nav-link {
+    color: var(--lux-dark);
+    font-weight: 500;
+}
+
+.navbar .nav-link:hover {
+    color: var(--lux-gold);
+}
+
+.navbar .nav-link i {
+    transition: .3s;
+}
+
+.navbar .nav-link:hover i {
+    color: var(--lux-gold);
+    text-shadow: 0 0 6px rgba(212,175,55,.4);
+}
+
+/* ===========================
+   SEARCH (btn-outline-primary)
+=========================== */
+
+.navbar .form-control {
+    border-radius: 20px 0 0 20px;
+}
+
+.navbar .btn-outline-primary {
+    border-radius: 0 20px 20px 0;
+    border-color: var(--lux-gold);
+    color: var(--lux-gold);
+}
+
+.navbar .btn-outline-primary:hover {
+    background: linear-gradient(135deg, var(--lux-gold), var(--lux-glow));
+    border-color: transparent;
+    color: #000;
+}
+
+/* ===========================
+   BADGE (wishlist & cart)
+=========================== */
+
+.navbar .badge.bg-danger,
+.navbar .badge.bg-primary {
+    background: linear-gradient(135deg, var(--lux-gold), var(--lux-glow)) !important;
+    color: #000;
+    font-weight: 700;
+}
+
+/* ===========================
+   DROPDOWN MENU
+=========================== */
+
+.navbar .dropdown-menu {
+    border-radius: 14px;
+    border: none;
+    padding: 8px;
+    box-shadow: 0 8px 25px rgba(0,0,0,.08);
+}
+
+.navbar .dropdown-item {
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-weight: 500;
+    transition: .25s;
+}
+
+.navbar .dropdown-item:hover {
+    background: rgba(212,175,55,.12);
+}
+
+/* Dropdown icons */
+.navbar .dropdown-item i {
+    color: var(--lux-gold);
+}
+
+/* ===========================
+   BUTTON DAFTAR
+=========================== */
+
+.navbar .btn-primary.btn-sm {
+    background: linear-gradient(135deg, var(--lux-gold), var(--lux-glow));
+    border: none;
+    color: #000;
+    font-weight: 600;
+    border-radius: 20px;
+    padding: 6px 16px;
+}
+
+.navbar .btn-primary.btn-sm:hover {
+    opacity: .9;
+}

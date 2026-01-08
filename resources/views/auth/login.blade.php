@@ -14,7 +14,7 @@ ditampilkan di @yield('content') --}}
 
       <div class="card shadow-sm">
         {{-- Card Header --}}
-        <div class="card-header bg-primary text-white text-center">
+        <div class="card-header text-white text-center" style="background-color: #E6C65C;">
           <h4 class="mb-0">🔐 Login ke Akun Anda</h4>
         </div>
 
@@ -89,7 +89,7 @@ ditampilkan di @yield('content') --}}
             ================== --}}
             <div class="d-grid gap-2">
               {{-- ↑ d-grid = display grid, membuat button full width --}}
-              <button type="submit" class="btn btn-primary btn-lg">
+              <button type="submit" class="btn-lg" style="background-color: #E6C65C; color: white;">
                 Login
               </button>
             </div>
@@ -117,7 +117,7 @@ TOMBOL LOGIN DENGAN GOOGLE ================================================ --}}
     merah (Google brand) --}} {{-- Google Icon SVG --}}
     <svg class="me-2" width="20" height="20" viewBox="0 0 24 24">
       <path
-        fill="#4285F4"
+        fill="rgba(244, 202, 66, 1)"
         d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
       />
       <path

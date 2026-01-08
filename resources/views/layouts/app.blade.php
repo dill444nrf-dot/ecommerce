@@ -9,6 +9,8 @@ FUNGSI: Master layout untuk halaman customer/publik
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {{-- link css --}}
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 
     {{-- CSRF Token untuk AJAX --}}
     <meta name="csrf-token" content="{{ csrf_token() }}">
